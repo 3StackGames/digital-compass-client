@@ -1,0 +1,31 @@
+{
+  "name": "me",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp -s",
+    "server": "nodemon dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Arjun Sarode <sarodearjun57@gmail.com> (http://arjun.ink/)",
+  "license": "ISC",
+  "devDependencies": {
+    "babelify": "^6.2.0",
+    "browser-sync": "^2.8.2",
+    "browserify": "^11.0.1",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-sourcemaps": "^1.5.2",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "es6-shim": "^0.33.0",
+    "events": "^1.0.2",
+    "object-assign": "^4.0.1",
+    "react": "^0.13.3",
+    "socket.io": "^1.3.6",
+    "socket.io-client": "^1.3.6"
+  }
+}
