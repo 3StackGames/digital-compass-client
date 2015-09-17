@@ -7,33 +7,28 @@ import {
   Gamepad,
   Landing
 } from './components';
+
 import {
   Route,
   Redirect,
-  NotFoundRoute
+  NotFoundRoute,
+  IndexRoute
 } from 'react-router';
 
 export default (
-  <Route name='app' path='/' component={App}>
-    {/*<Route
-      name='landing'
-      path='/home'
-      component={Landing} />
+  <Route path='/' component={ App }>
+    <IndexRoute component={ Landing } />
     <Route
-       name='display.create'
-       path='/display/create'
-       component={Display.create} />
+       path='display/create'
+       component={ Display.create } />
      <Route
-       name='display.lobby'
-       path='/display/lobby'
-       component={Display.lobby} />
+       path='display/lobby'
+       component={ Display.lobby } />
      <Route
-       name='gamepad.join'
-       path='/gamepad/join'
-       component={Gamepad.join} />
+       path='gamepad/join'
+       component={ Gamepad.join } />
      <Route
-       name='gamepad.lobby'
-       path='/gamepad/lobby'
-       component={Gamepad.lobby} />*/}
-   </Route>
+       path='gamepad/lobby'
+       component={ Gamepad.lobby } />
+  </Route>
 );

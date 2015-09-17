@@ -1,1 +1,5 @@
-export { default as Landing } from './Landing';
+'use strict';
+
+import landing from './Landing';
+
+export default landing;

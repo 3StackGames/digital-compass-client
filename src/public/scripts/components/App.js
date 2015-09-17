@@ -2,34 +2,29 @@
 
 import React from 'react';
 import engine from '../engine';
-// import Landing from './landing';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      gameState: this.engineState
-    }
+    this.state = { gameState: this.engineState }
+
     this.engineState = engine.gameState.state;
+    this.bindState = this.bindState.bind(this);
   }
 
   componentWillMount() {
-    engine.gameState.addStateListener(this.bindState.bind(this));
+    engine.gameState.addStateListener(this.bindState);
     this.setState({
       gameState: this.engineState
     });
   }
 
   componentWillUnmount() {
-    engine.gameState.removeStateListener(this.bindState.bind(this));
+    engine.gameState.removeStateListener(this.bindState);
   }
 
   render() {
-    return (
-      <div>
-        Landing
-      </div>
-    );
+    return <div>{ React.cloneElement(this.props.children, { gameState: this.engineState }) }</div>;
   }
 
   bindState() {
