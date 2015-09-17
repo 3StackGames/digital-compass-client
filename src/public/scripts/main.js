@@ -2,9 +2,7 @@
 
 import 'es6-shim';
 import React from 'react';
-import App from './App';
+import Router from 'react-router';
+import routes from './routes';
 
-React.render(
-  <App/>,
-  document.getElementById('root')
-);
+React.render(<Router>{routes}</Router>, document.getElementById('root'));
