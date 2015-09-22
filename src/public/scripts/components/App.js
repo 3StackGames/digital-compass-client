@@ -18,6 +18,11 @@ export default class App extends React.Component {
     this.setState({
       gameState: this.engineState
     });
+    engine.dc.on('Game Code', (gameCode) => {
+      this.setState({
+        gameCode: gameCode
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -27,9 +32,35 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        Landing
+        <button
+          onClick={() => { engine.displayJoin() }}>
+          Display Join
+        </button>
+        <button
+          onClick={() => { engine.gamepadJoin('arjun', this.state.gameCode) }}>
+          Gamepad Join
+        </button>
+        <input onChange={this.inputGameCode.bind(this)}/>
+        <button
+          onClick={() => { engine.beginGame() }}>
+          Begin Game
+        </button>
+        <button
+          onClick={() => { engine.displayActionComplete() }}>
+          Display Action Complete
+        </button>
+        <button
+          onClick={() => { engine.gamepadInput() }}>
+          Gamepad Input
+        </button>
       </div>
     );
+  }
+
+  inputGameCode(e) {
+    this.setState({
+      gameCode: e.target.value
+    })
   }
 
   bindState() {

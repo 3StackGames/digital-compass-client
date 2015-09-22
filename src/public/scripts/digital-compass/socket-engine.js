@@ -11,28 +11,55 @@ export default class SocketEngine {
     this.gameState = stateEngine;
     this.dc = io.connect(`http://${host}:${port}`);
     this.dc.on('connect', this.onConnect);
-    this.dc.on('update state', this.onUpdateState);
+    this.dc.on('State Update', this.onStateUpdate);
+    // this.dc.on('Game Code', this.onGameCode);
+    this.dc.on('Join Successful', this.onJoinSuccessful);
+    this.dc.on('Game Code', this.onGameCode);
   }
 
-  joinPlayer(player) {
-    console.log('CLIENT => emitted join player with data: ', player);
-    this.dc.emit('join player', {
-      player: player
-    })
+  displayActionComplete() {
+    console.log('CLIENT => emitted display action complete');
+    this.dc.emit('Display Action Complete');
   }
 
-  submitAnswers(answers) {
-    console.log('CLIENT => emitted answers with data: ', answers);
-    this.dc.emit('submit answers', {
-      answers: answers
+  gamepadInput(input={tee: 'hee'}) {
+    console.log('CLIENT => emitted gamepad input: ', input);
+    this.dc.emit('Gamepad Input', {
+      input: input
     });
+  }
+
+  displayJoin() {
+    console.log('CLIENT => emitted display join');
+    this.dc.emit('Display Join');
+  }
+
+  gamepadJoin(name='user', gameCode='1234') {
+    console.log('CLIENT => emitted gamepad join: ', name, ' ', gameCode);
+    this.dc.emit('Gamepad Join', {
+      name: name,
+      gameCode: gameCode
+    });
+  }
+
+  beginGame() {
+    console.log('CLIENT => emitted begin game');
+    this.dc.emit('Begin Game');
+  }
+
+  onJoinSuccessful() {
+    console.log('SERVER => emitted join successful');
+  }
+
+  onGameCode(gameCode) {
+    console.log('SERVER => emitted game code: ', gameCode);
   }
 
   onConnect() {
     console.log('SERVER => emitted connect');
   }
 
-  onUpdateState(newState) {
+  onStateUpdate(newState) {
     console.log('SERVER => emitted update state with data: ', newState);
     stateEngine.state = newState;
   }

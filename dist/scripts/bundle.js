@@ -34060,9 +34060,16 @@ var App = (function (_React$Component) {
   _createClass(App, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
+      var _this = this;
+
       _engine2['default'].gameState.addStateListener(this.bindState.bind(this));
       this.setState({
         gameState: this.engineState
+      });
+      _engine2['default'].dc.on('Game Code', function (gameCode) {
+        _this.setState({
+          gameCode: gameCode
+        });
       });
     }
   }, {
@@ -34073,11 +34080,60 @@ var App = (function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       return _react2['default'].createElement(
         'div',
         null,
-        'Landing'
+        _react2['default'].createElement(
+          'button',
+          {
+            onClick: function () {
+              _engine2['default'].displayJoin();
+            } },
+          'Display Join'
+        ),
+        _react2['default'].createElement(
+          'button',
+          {
+            onClick: function () {
+              _engine2['default'].gamepadJoin('arjun', _this2.state.gameCode);
+            } },
+          'Gamepad Join'
+        ),
+        _react2['default'].createElement('input', { onChange: this.inputGameCode.bind(this) }),
+        _react2['default'].createElement(
+          'button',
+          {
+            onClick: function () {
+              _engine2['default'].beginGame();
+            } },
+          'Begin Game'
+        ),
+        _react2['default'].createElement(
+          'button',
+          {
+            onClick: function () {
+              _engine2['default'].displayActionComplete();
+            } },
+          'Display Action Complete'
+        ),
+        _react2['default'].createElement(
+          'button',
+          {
+            onClick: function () {
+              _engine2['default'].gamepadInput();
+            } },
+          'Gamepad Input'
+        )
       );
+    }
+  }, {
+    key: 'inputGameCode',
+    value: function inputGameCode(e) {
+      this.setState({
+        gameCode: e.target.value
+      });
     }
   }, {
     key: 'bindState',
@@ -34154,9 +34210,72 @@ module.exports = exports['default'];
 "use strict";
 
 },{}],256:[function(require,module,exports){
-"use strict";
+'use strict';
 
-},{}],257:[function(require,module,exports){
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _engine = require('../../engine');
+
+var _engine2 = _interopRequireDefault(_engine);
+
+'use strict';
+
+var App = (function (_React$Component) {
+  _inherits(App, _React$Component);
+
+  function App(props) {
+    _classCallCheck(this, App);
+
+    _get(Object.getPrototypeOf(App.prototype), 'constructor', this).call(this, props);
+    this.state = {};
+  }
+
+  _createClass(App, [{
+    key: 'render',
+    value: function render() {
+      return _react2['default'].createElement(
+        'div',
+        null,
+        'Landing'
+      );
+    }
+  }], [{
+    key: 'PropTypes',
+    value: {},
+    enumerable: true
+  }, {
+    key: 'defaultProps',
+    value: {},
+    enumerable: true
+  }, {
+    key: 'contextTypes',
+    value: {},
+    enumerable: true
+  }]);
+
+  return App;
+})(_react2['default'].Component);
+
+exports['default'] = App;
+module.exports = exports['default'];
+
+},{"../../engine":262,"react":200}],257:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -34174,8 +34293,8 @@ var _Lobby = require('./Lobby');
 var _Lobby2 = _interopRequireDefault(_Lobby);
 
 exports['default'] = {
-  join: _Join2['default'],
-  lobby: _Lobby2['default']
+  Join: _Join2['default'],
+  Lobby: _Lobby2['default']
 };
 module.exports = exports['default'];
 
@@ -34263,24 +34382,61 @@ var SocketEngine = (function () {
     this.gameState = stateEngine;
     this.dc = _socketIoClient2['default'].connect('http://' + host + ':' + port);
     this.dc.on('connect', this.onConnect);
-    this.dc.on('update state', this.onUpdateState);
+    this.dc.on('State Update', this.onStateUpdate);
+    // this.dc.on('Game Code', this.onGameCode);
+    this.dc.on('Join Successful', this.onJoinSuccessful);
+    this.dc.on('Game Code', this.onGameCode);
   }
 
   _createClass(SocketEngine, [{
-    key: 'joinPlayer',
-    value: function joinPlayer(player) {
-      console.log('CLIENT => emitted join player with data: ', player);
-      this.dc.emit('join player', {
-        player: player
+    key: 'displayActionComplete',
+    value: function displayActionComplete() {
+      console.log('CLIENT => emitted display action complete');
+      this.dc.emit('Display Action Complete');
+    }
+  }, {
+    key: 'gamepadInput',
+    value: function gamepadInput() {
+      var input = arguments.length <= 0 || arguments[0] === undefined ? { tee: 'hee' } : arguments[0];
+
+      console.log('CLIENT => emitted gamepad input: ', input);
+      this.dc.emit('Gamepad Input', {
+        input: input
       });
     }
   }, {
-    key: 'submitAnswers',
-    value: function submitAnswers(answers) {
-      console.log('CLIENT => emitted answers with data: ', answers);
-      this.dc.emit('submit answers', {
-        answers: answers
+    key: 'displayJoin',
+    value: function displayJoin() {
+      console.log('CLIENT => emitted display join');
+      this.dc.emit('Display Join');
+    }
+  }, {
+    key: 'gamepadJoin',
+    value: function gamepadJoin() {
+      var name = arguments.length <= 0 || arguments[0] === undefined ? 'user' : arguments[0];
+      var gameCode = arguments.length <= 1 || arguments[1] === undefined ? '1234' : arguments[1];
+
+      console.log('CLIENT => emitted gamepad join: ', name, ' ', gameCode);
+      this.dc.emit('Gamepad Join', {
+        name: name,
+        gameCode: gameCode
       });
+    }
+  }, {
+    key: 'beginGame',
+    value: function beginGame() {
+      console.log('CLIENT => emitted begin game');
+      this.dc.emit('Begin Game');
+    }
+  }, {
+    key: 'onJoinSuccessful',
+    value: function onJoinSuccessful() {
+      console.log('SERVER => emitted join successful');
+    }
+  }, {
+    key: 'onGameCode',
+    value: function onGameCode(gameCode) {
+      console.log('SERVER => emitted game code: ', gameCode);
     }
   }, {
     key: 'onConnect',
@@ -34288,8 +34444,8 @@ var SocketEngine = (function () {
       console.log('SERVER => emitted connect');
     }
   }, {
-    key: 'onUpdateState',
-    value: function onUpdateState(newState) {
+    key: 'onStateUpdate',
+    value: function onStateUpdate(newState) {
       console.log('SERVER => emitted update state with data: ', newState);
       stateEngine.state = newState;
     }
@@ -34373,13 +34529,13 @@ var _digitalCompass = require('./digital-compass');
 
 var jason = {
   host: '192.168.0.109',
-  port: 3000
+  port: 3333
 };
 var local = {
   host: 'localhost',
   port: 3000
 };
-var socketEngine = new _digitalCompass.SocketEngine(local);
+var socketEngine = new _digitalCompass.SocketEngine(jason);
 
 exports['default'] = socketEngine;
 module.exports = exports['default'];
