@@ -33,12 +33,11 @@ gulp.task('watch', function() {
 });
 
 gulp.task('sync', function() {
-  browserSync({
-    server: '.',
-    port: 8000
-  });
+  // browserSync({
+  //   server: '.',
+  //   port: 8000
+  // });
 });
 
 gulp.task('build', ['client', 'server']);
 gulp.task('default', ['watch', 'build', 'sync']);
-

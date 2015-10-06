@@ -34052,9 +34052,8 @@ var App = (function (_React$Component) {
 
     _get(Object.getPrototypeOf(App.prototype), 'constructor', this).call(this, props);
     this.state = {
-      gameState: this.engineState
+      gameState: _engine2['default'].gameState.state
     };
-    this.engineState = _engine2['default'].gameState.state;
   }
 
   _createClass(App, [{
@@ -34064,7 +34063,7 @@ var App = (function (_React$Component) {
 
       _engine2['default'].gameState.addStateListener(this.bindState.bind(this));
       this.setState({
-        gameState: this.engineState
+        gameState: _engine2['default'].gameState.state
       });
       _engine2['default'].dc.on('Game Code', function (gameCode) {
         _this.setState({
@@ -34086,47 +34085,134 @@ var App = (function (_React$Component) {
         'div',
         null,
         _react2['default'].createElement(
-          'button',
-          {
-            onClick: function () {
-              _engine2['default'].displayJoin();
-            } },
-          'Display Join'
+          'div',
+          { className: 'block block-events' },
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Events:'
+          ),
+          _react2['default'].createElement(
+            'button',
+            {
+              onClick: function () {
+                _engine2['default'].displayJoin();
+              } },
+            'Display Join'
+          ),
+          _react2['default'].createElement(
+            'button',
+            {
+              onClick: function () {
+                _engine2['default'].gamepadJoin('arjun', _this2.state.gameCode);
+              } },
+            'Gamepad Join'
+          ),
+          _react2['default'].createElement(
+            'button',
+            {
+              onClick: function () {
+                _engine2['default'].beginGame();
+              } },
+            'Begin Game'
+          ),
+          _react2['default'].createElement(
+            'button',
+            {
+              onClick: function () {
+                _engine2['default'].displayActionComplete();
+              } },
+            'Display Action Complete'
+          )
         ),
         _react2['default'].createElement(
-          'button',
-          {
-            onClick: function () {
-              _engine2['default'].gamepadJoin('arjun', _this2.state.gameCode);
-            } },
-          'Gamepad Join'
+          'div',
+          { className: 'block block-player-join' },
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Gamepad join:'
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement(
+              'label',
+              null,
+              'Name'
+            ),
+            _react2['default'].createElement('input', { onChange: this.inputName.bind(this) })
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement(
+              'label',
+              null,
+              'Code'
+            ),
+            _react2['default'].createElement('input', { onChange: this.inputGameCode.bind(this) })
+          ),
+          _react2['default'].createElement(
+            'button',
+            { onClick: this.gamepadJoin.bind(this) },
+            'Join'
+          )
         ),
-        _react2['default'].createElement('input', { onChange: this.inputGameCode.bind(this) }),
         _react2['default'].createElement(
-          'button',
-          {
-            onClick: function () {
-              _engine2['default'].beginGame();
-            } },
-          'Begin Game'
+          'div',
+          { className: 'block block-input' },
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Gamepad input:'
+          ),
+          _react2['default'].createElement('input', { onChange: this.inputGameCode.bind(this) }),
+          _react2['default'].createElement(
+            'button',
+            {
+              onClick: function () {
+                _this2.inputLie.bind(_this2);
+              } },
+            'Gamepad Input'
+          ),
+          this.playerSelectionInputs
         ),
         _react2['default'].createElement(
-          'button',
-          {
-            onClick: function () {
-              _engine2['default'].displayActionComplete();
-            } },
-          'Display Action Complete'
-        ),
-        _react2['default'].createElement(
-          'button',
-          {
-            onClick: function () {
-              _engine2['default'].gamepadInput();
-            } },
-          'Gamepad Input'
+          'div',
+          { className: 'block block-state' },
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Game State:'
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            JSON.stringify(this.state.gameState, null, 2)
+          )
         )
       );
+    }
+  }, {
+    key: 'inputLie',
+    value: function inputLie(e) {
+      var lie = e.target.value;
+      var player = this.state.gamepadName;
+      var gameCode = this.state.gameCode;
+
+      _engine2['default'].gamepadInput({
+        lie: lie,
+        player: player,
+        gameCode: gameCode
+      });
+    }
+  }, {
+    key: 'inputName',
+    value: function inputName(e) {
+      this.setState({
+        gamepadName: e.target.value
+      });
     }
   }, {
     key: 'inputGameCode',
@@ -34136,10 +34222,15 @@ var App = (function (_React$Component) {
       });
     }
   }, {
+    key: 'gamepadJoin',
+    value: function gamepadJoin(e) {
+      _engine2['default'].gamepadJoin(this.state.gamepadName, this.state.gameCode);
+    }
+  }, {
     key: 'bindState',
     value: function bindState() {
       this.setState({
-        gameState: this.engineState
+        gameState: _engine2['default'].gameState.state
       });
     }
   }, {
@@ -34156,6 +34247,45 @@ var App = (function (_React$Component) {
     value: function submitAnswers() {
       var answers = [{ value: 'hi' }, { value: 'bye' }];
       _engine2['default'].submitAnswers(answers);
+    }
+  }, {
+    key: 'playerSelectionInputs',
+    get: function get() {
+
+      // {
+      //   question: currentquestion,
+      //   lies: [
+      //     {
+      //       lie: 'text',
+      //       liar: displayName
+      //     }
+      //   ],
+      //   voteCount:,
+      //   questionCount:
+      //
+      // }
+      if (!_engine2['default'].gameState.state.lies || _engine2['default'].gameState.state.lies.length === 0) {
+        return _react2['default'].createElement(
+          'p',
+          null,
+          'No lies'
+        );
+      }
+      return _engine2['default'].gameState.state.lies.map(function (lieItem) {
+        var lie = lieItem.lie;
+
+        return _react2['default'].createElement(
+          'button',
+          {
+            key: lie },
+          lie,
+          'onClick=',
+          function () {
+            _engine2['default'].gamepadInput(lie);
+          },
+          '>'
+        );
+      });
     }
   }], [{
     key: 'PropTypes',
@@ -34383,9 +34513,7 @@ var SocketEngine = (function () {
     this.dc = _socketIoClient2['default'].connect('http://' + host + ':' + port);
     this.dc.on('connect', this.onConnect);
     this.dc.on('State Update', this.onStateUpdate);
-    // this.dc.on('Game Code', this.onGameCode);
-    this.dc.on('Join Successful', this.onJoinSuccessful);
-    this.dc.on('Game Code', this.onGameCode);
+    this.dc.on('Display Action Complete', this.onDisplayActionComplete);
   }
 
   _createClass(SocketEngine, [{
@@ -34396,13 +34524,9 @@ var SocketEngine = (function () {
     }
   }, {
     key: 'gamepadInput',
-    value: function gamepadInput() {
-      var input = arguments.length <= 0 || arguments[0] === undefined ? { tee: 'hee' } : arguments[0];
-
+    value: function gamepadInput(input) {
       console.log('CLIENT => emitted gamepad input: ', input);
-      this.dc.emit('Gamepad Input', {
-        input: input
-      });
+      this.dc.emit('Gamepad Input', input);
     }
   }, {
     key: 'displayJoin',
@@ -34428,20 +34552,24 @@ var SocketEngine = (function () {
       console.log('CLIENT => emitted begin game');
       this.dc.emit('Begin Game');
     }
-  }, {
-    key: 'onJoinSuccessful',
-    value: function onJoinSuccessful() {
-      console.log('SERVER => emitted join successful');
-    }
-  }, {
-    key: 'onGameCode',
-    value: function onGameCode(gameCode) {
-      console.log('SERVER => emitted game code: ', gameCode);
-    }
+
+    // onJoinSuccessful() {
+    //   console.log('SERVER => emitted join successful');
+    // }
+
+    // onGameCode(gameCode) {
+    //   console.log('SERVER => emitted game code: ', gameCode);
+    // }
+
   }, {
     key: 'onConnect',
     value: function onConnect() {
       console.log('SERVER => emitted connect');
+    }
+  }, {
+    key: 'onDisplayActionComplete',
+    value: function onDisplayActionComplete() {
+      console.log('CLIENT (display) => emitted display action complete');
     }
   }, {
     key: 'onStateUpdate',
@@ -34533,9 +34661,9 @@ var jason = {
 };
 var local = {
   host: 'localhost',
-  port: 3000
+  port: 3333
 };
-var socketEngine = new _digitalCompass.SocketEngine(jason);
+var socketEngine = new _digitalCompass.SocketEngine(local);
 
 exports['default'] = socketEngine;
 module.exports = exports['default'];

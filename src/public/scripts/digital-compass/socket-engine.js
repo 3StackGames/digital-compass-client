@@ -12,9 +12,7 @@ export default class SocketEngine {
     this.dc = io.connect(`http://${host}:${port}`);
     this.dc.on('connect', this.onConnect);
     this.dc.on('State Update', this.onStateUpdate);
-    // this.dc.on('Game Code', this.onGameCode);
-    this.dc.on('Join Successful', this.onJoinSuccessful);
-    this.dc.on('Game Code', this.onGameCode);
+    this.dc.on('Display Action Complete', this.onDisplayActionComplete);
   }
 
   displayActionComplete() {
@@ -22,11 +20,9 @@ export default class SocketEngine {
     this.dc.emit('Display Action Complete');
   }
 
-  gamepadInput(input={tee: 'hee'}) {
+  gamepadInput(input) {
     console.log('CLIENT => emitted gamepad input: ', input);
-    this.dc.emit('Gamepad Input', {
-      input: input
-    });
+    this.dc.emit('Gamepad Input', input);
   }
 
   displayJoin() {
@@ -47,16 +43,20 @@ export default class SocketEngine {
     this.dc.emit('Begin Game');
   }
 
-  onJoinSuccessful() {
-    console.log('SERVER => emitted join successful');
-  }
+  // onJoinSuccessful() {
+  //   console.log('SERVER => emitted join successful');
+  // }
 
-  onGameCode(gameCode) {
-    console.log('SERVER => emitted game code: ', gameCode);
-  }
+  // onGameCode(gameCode) {
+  //   console.log('SERVER => emitted game code: ', gameCode);
+  // }
 
   onConnect() {
     console.log('SERVER => emitted connect');
+  }
+
+  onDisplayActionComplete() {
+    console.log('CLIENT (display) => emitted display action complete')
   }
 
   onStateUpdate(newState) {

@@ -8,15 +8,14 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      gameState: this.engineState
+      gameState: engine.gameState.state
     }
-    this.engineState = engine.gameState.state;
   }
 
   componentWillMount() {
     engine.gameState.addStateListener(this.bindState.bind(this));
     this.setState({
-      gameState: this.engineState
+      gameState: engine.gameState.state
     });
     engine.dc.on('Game Code', (gameCode) => {
       this.setState({
@@ -32,29 +31,100 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <button
-          onClick={() => { engine.displayJoin() }}>
-          Display Join
-        </button>
-        <button
-          onClick={() => { engine.gamepadJoin('arjun', this.state.gameCode) }}>
-          Gamepad Join
-        </button>
-        <input onChange={this.inputGameCode.bind(this)}/>
-        <button
-          onClick={() => { engine.beginGame() }}>
-          Begin Game
-        </button>
-        <button
-          onClick={() => { engine.displayActionComplete() }}>
-          Display Action Complete
-        </button>
-        <button
-          onClick={() => { engine.gamepadInput() }}>
-          Gamepad Input
-        </button>
+        <div className="block block-events">
+          <p>Events:</p>
+          <button
+            onClick={() => { engine.displayJoin() }}>
+            Display Join
+          </button>
+          <button
+            onClick={() => { engine.gamepadJoin('arjun', this.state.gameCode) }}>
+            Gamepad Join
+          </button>
+          <button
+            onClick={() => { engine.beginGame() }}>
+            Begin Game
+          </button>
+          <button
+            onClick={() => { engine.displayActionComplete() }}>
+            Display Action Complete
+          </button>
+        </div>
+        <div className="block block-player-join">
+          <p>Gamepad join:</p>
+          <div>
+            <label>Name</label>
+            <input onChange={this.inputName.bind(this)}/>
+          </div>
+          <div>
+            <label>Code</label>
+            <input onChange={this.inputGameCode.bind(this)}/>
+          </div>
+          <button onClick={this.gamepadJoin.bind(this)}>Join</button>
+        </div>
+        <div className="block block-input">
+          <p>Gamepad input:</p>
+          <input onChange={this.inputGameCode.bind(this)}/>
+          <button
+            onClick={() => { this.inputLie.bind(this) }}>
+            Gamepad Input
+          </button>
+          {this.playerSelectionInputs}
+        </div>
+        <div className="block block-state">
+          <p>Game State:</p>
+          <div>{JSON.stringify(this.state.gameState, null, 2)}</div>
+        </div>
       </div>
     );
+  }
+
+  get playerSelectionInputs() {
+
+    // {
+    //   question: currentquestion,
+    //   lies: [
+    //     {
+    //       lie: 'text',
+    //       liar: displayName
+    //     }
+    //   ],
+    //   voteCount:,
+    //   questionCount:
+    //
+    // }
+    if (!engine.gameState.state.lies || engine.gameState.state.lies.length === 0) {
+      return (
+        <p>No lies</p>
+      );
+    }
+    return engine.gameState.state.lies.map(lieItem => {
+      let { lie } = lieItem;
+      return (
+        <button
+          key={lie}>{lie}
+          onClick={() => { engine.gamepadInput(lie) }}>
+        </button>
+      );
+    });
+  }
+
+  inputLie(e) {
+    let lie = e.target.value;
+    let player = this.state.gamepadName;
+    let gameCode = this.state.gameCode;
+
+    engine.gamepadInput({
+      lie,
+      player,
+      gameCode
+    });
+  }
+
+  inputName(e) {
+    this.setState({
+      gamepadName: e.target.value
+    });
   }
 
   inputGameCode(e) {
@@ -63,9 +133,13 @@ export default class App extends React.Component {
     })
   }
 
+  gamepadJoin(e) {
+    engine.gamepadJoin(this.state.gamepadName, this.state.gameCode);
+  }
+
   bindState() {
     this.setState({
-      gameState: this.engineState
+      gameState: engine.gameState.state
     });
   }
 
