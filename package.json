@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "client": "gulp build",
     "build": "gulp -s",
     "server": "nodemon dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"

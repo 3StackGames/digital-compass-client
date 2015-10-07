@@ -64,9 +64,9 @@ export default class App extends React.Component {
         </div>
         <div className="block block-input">
           <p>Gamepad input:</p>
-          <input onChange={this.inputGameCode.bind(this)}/>
+          <input onChange={this.bindLie.bind(this)}/>
           <button
-            onClick={() => { this.inputLie.bind(this) }}>
+            onClick={this.inputLie.bind(this)}>
             Gamepad Input
           </button>
           {this.playerSelectionInputs}
@@ -109,10 +109,16 @@ export default class App extends React.Component {
     });
   }
 
-  inputLie(e) {
+  bindLie(e) {
     let lie = e.target.value;
+    this.setState({
+      lie: lie
+    });
+  }
+
+  inputLie(e) {
+    let { lie, gameCode } = this.state;
     let player = this.state.gamepadName;
-    let gameCode = this.state.gameCode;
 
     engine.gamepadInput({
       lie,
