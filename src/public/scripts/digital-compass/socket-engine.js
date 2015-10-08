@@ -33,7 +33,7 @@ const SocketEngine = (opts) =>  {
    * @param  {Object} payload The payload to send over the socket
    */
   function gamepadInput(payload) {
-    validatePayload(payload, 'gameCode');
+    validatePayload(payload, 'gameCode')
     if (debug) console.log('CLIENT => emitted gamepad input: ', payload)
     _dc.emit(events.GAMEPAD_INPUT, payload)
   }
@@ -53,7 +53,7 @@ const SocketEngine = (opts) =>  {
    * @param  {Object} payload The payload to send over the socket
    */
   function gamepadJoin(payload) {
-    validatePayload(payload, 'name', 'gameCode');
+    validatePayload(payload, 'name', 'gameCode')
     _dc.emit(events.GAMEPAD_JOIN, payload)
     if (debug) console.log(`CLIENT => emitted gamepad join: ${payload}`)
   }
@@ -70,7 +70,7 @@ const SocketEngine = (opts) =>  {
    * Handler for the connection socket event.
    */
   function onConnect() {
-    if (this.debug) console.log('SERVER => emitted connect');
+    if (this.debug) console.log('SERVER => emitted connect')
   }
 
   /**
@@ -87,24 +87,21 @@ const SocketEngine = (opts) =>  {
    * @param  {Object} newState The updated state object passed from the server.
    */
   function onStateUpdate(newState) {
-    if (this.debug) console.log('SERVER => emitted update state with data: ', newState);
+    if (this.debug) console.log('SERVER => emitted update state with data: ', newState)
     stateEngine.setState(newState)
   }
 
   /**
    * The object that acts as the public interface for the socket engine.
    */
-  return {
+  return Object.assign(stateEngine, {
     displayActionComplete,
     gamepadInput,
     displayJoin,
     gamepadJoin,
     beginGame,
-    socket: _dc,
-    gameState: stateEngine,
-    getState: stateEngine.getState,
-    setState: stateEngine.setState
-  }
+    socket: _dc
+  })
 }
 
 export default SocketEngine

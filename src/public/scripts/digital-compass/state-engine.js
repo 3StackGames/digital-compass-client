@@ -4,8 +4,9 @@ import { EventEmitter} from 'events';
 const CHANGE_EVENT = 'change';
 
 const StateEngine = (initialState={}) => {
+  let engine = {}
   let gameState = initialState
-  let ee = new EventEmitter()
+  EventEmitter.call(engine)
 
   /**
    * Setter for the game state. A change event is emitted afterwards.
@@ -31,7 +32,7 @@ const StateEngine = (initialState={}) => {
    * Emits a change event.
    */
   function emitChange() {
-    ee.emit(CHANGE_EVENT);
+    engine.emit(CHANGE_EVENT);
   }
 
   /**
@@ -40,7 +41,7 @@ const StateEngine = (initialState={}) => {
    * @param {Function} callback Function to call on state change events
    */
   function addStateListener(callback) {
-    ee.on(CHANGE_EVENT, callback);
+    engine.on(CHANGE_EVENT, callback);
   }
 
   /**
@@ -49,18 +50,18 @@ const StateEngine = (initialState={}) => {
    * @param  {Function} callback The function to remove
    */
   function removeStateListener(callback) {
-    ee.removeListener(CHANGE_EVENT, callback);
+    engine.removeListener(CHANGE_EVENT, callback);
   }
 
   /**
    * The object that acts as the public interface to the state engine.
    */
-  return {
-    setState,
+  return Object.assign(engine, EventEmitter.prototype, {
     getState,
+    setState,
     addStateListener,
     removeStateListener
-  }
+  })
 }
 
 export default StateEngine

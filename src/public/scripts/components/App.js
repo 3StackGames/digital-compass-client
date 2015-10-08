@@ -13,14 +13,14 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    engine.gameState.addStateListener(this.bindState);
+    engine.addStateListener(this.bindState);
     this.setState({
       gameState: engine.getState()
     });
   }
 
   componentWillUnmount() {
-    engine.gameState.removeStateListener(this.bindState);
+    engine.removeStateListener(this.bindState);
   }
 
   render() {
