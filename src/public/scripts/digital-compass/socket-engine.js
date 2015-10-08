@@ -1,66 +1,83 @@
-'use strict';
+'use strict'
 
-import StateEngine from './state-engine';
-import io from 'socket.io-client';
-let stateEngine = new StateEngine();
+import StateEngine from './state-engine'
+import io from 'socket.io-client'
+import { events, devices } from './constants'
+import { validatePayload } from './utils'
 
-export default class SocketEngine {
-  constructor(opts) {
-    let { host, port } = opts;
+const SocketEngine = (opts) =>  {
+  const { host, port } = opts
+  const _dc = io.connect(`http://${host}:${port}`)
 
-    this.gameState = stateEngine;
-    this.dc = io.connect(`http://${host}:${port}`);
-    this.dc.on('connect', this.onConnect);
-    this.dc.on('State Update', this.onStateUpdate);
-    this.dc.on('Display Action Complete', this.onDisplayActionComplete);
+  // Runs in debug mode which prints out helpful console log statements
+  const debug = opts.debug || false
+  let stateEngine = StateEngine()
+
+  // Register callbacks on certain socket events
+  _dc.on(events.CONNECT, onConnect)
+  _dc.on(events.STATE_UPDATE, onStateUpdate)
+  _dc.on(events.DISPLAY_COMPLETE, onDisplayActionComplete)
+
+  /**
+   * Emits a display action compete socket event
+   */
+  function displayActionComplete() {
+    if (debug) console.log('CLIENT => emitted display action complete')
+    _dc.emit(events.DISPLAY_COMPLETE)
   }
 
-  displayActionComplete() {
-    console.log('CLIENT => emitted display action complete');
-    this.dc.emit('Display Action Complete');
+  /**
+   * Emits a gamepad input socket event with the given payload. The payload
+   * must have a `gameCode` field or an error will be thrown.
+   *
+   * @param  {Object} payload The payload to send over the socket
+   */
+  function gamepadInput(payload) {
+    validatePayload(payload, 'gameCode');
+    if (debug) console.log('CLIENT => emitted gamepad input: ', payload)
+    _dc.emit(events.GAMEPAD_INPUT, payload)
   }
 
-  gamepadInput(input) {
-    console.log('CLIENT => emitted gamepad input: ', input);
-    this.dc.emit('Gamepad Input', input);
+  function displayJoin() {
+    if (debug) console.log('CLIENT => emitted display join')
+    _dc.emit(events.DISPLAY_JOIN)
   }
 
-  displayJoin() {
-    console.log('CLIENT => emitted display join');
-    this.dc.emit('Display Join');
+  function gamepadJoin(payload) {
+    validatePayload(payload, 'name', 'gameCode');
+    _dc.emit(events.GAMEPAD_JOIN, payload)
+    if (debug) console.log(`CLIENT => emitted gamepad join: ${payload}`)
   }
 
-  gamepadJoin(name='user', gameCode='1234') {
-    console.log('CLIENT => emitted gamepad join: ', name, ' ', gameCode);
-    this.dc.emit('Gamepad Join', {
-      name: name,
-      gameCode: gameCode
-    });
+  function beginGame() {
+    if (debug) console.log('CLIENT => emitted begin game')
+    _dc.emit(events.BEGIN_GAME)
   }
 
-  beginGame() {
-    console.log('CLIENT => emitted begin game');
-    this.dc.emit('Begin Game');
+  function onConnect() {
+    if (this.debug) console.log('SERVER => emitted connect');
   }
 
-  // onJoinSuccessful() {
-  //   console.log('SERVER => emitted join successful');
-  // }
-
-  // onGameCode(gameCode) {
-  //   console.log('SERVER => emitted game code: ', gameCode);
-  // }
-
-  onConnect() {
-    console.log('SERVER => emitted connect');
+  function onDisplayActionComplete() {
+    if (this.debug) console.log('CLIENT (display) => emitted display action complete')
   }
 
-  onDisplayActionComplete() {
-    console.log('CLIENT (display) => emitted display action complete')
+  function onStateUpdate(newState) {
+    if (this.debug) console.log('SERVER => emitted update state with data: ', newState);
+    stateEngine.setState(newState)
   }
 
-  onStateUpdate(newState) {
-    console.log('SERVER => emitted update state with data: ', newState);
-    stateEngine.state = newState;
+  return {
+    displayActionComplete,
+    gamepadInput,
+    displayJoin,
+    gamepadJoin,
+    beginGame,
+    socket: _dc,
+    gameState: stateEngine,
+    getState: stateEngine.getState,
+    setState: stateEngine.setState
   }
 }
+
+export default SocketEngine

@@ -4,12 +4,14 @@ import { SocketEngine } from './digital-compass';
 
 const jason = {
   host: '192.168.0.109',
-  port: 3333
+  port: 3333,
+  debug: true
 };
 const local = {
   host: 'localhost',
-  port: 3333
+  port: 3333,
+  debug: true
 };
-let socketEngine = new SocketEngine(local);
+let socketEngine = SocketEngine(local);
 
 export default socketEngine;

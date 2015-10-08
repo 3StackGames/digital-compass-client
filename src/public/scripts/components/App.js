@@ -8,19 +8,14 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      gameState: engine.gameState.state
+      gameState: engine.getState()
     }
   }
 
   componentWillMount() {
     engine.gameState.addStateListener(this.bindState);
     this.setState({
-      gameState: engine.gameState.state
-    });
-    engine.dc.on('Game Code', (gameCode) => {
-      this.setState({
-        gameCode: gameCode
-      });
+      gameState: engine.getState()
     });
   }
 
@@ -60,9 +55,9 @@ export default class App extends React.Component {
         </div>
         <div className="block block-input">
           <p>Gamepad input:</p>
-          <input onChange={this.bindLie.bind(this)}/>
+          <input onChange={this.bindLie}/>
           <button
-            onClick={this.inputLie.bind(this)}>
+            onClick={this.inputLie}>
             Submit Lie
           </button>
           <div>
@@ -112,12 +107,12 @@ export default class App extends React.Component {
   }
 
   get playerSelectionInputs() {
-    if (!engine.gameState.state.lies || engine.gameState.state.lies.length === 0) {
+    if (!engine.getState().lies || engine.getState().lies.length === 0) {
       return (
         <p>No lies</p>
       );
     }
-    return engine.gameState.state.lies.map(lieItem => {
+    return engine.getState().lies.map(lieItem => {
       let { lie } = lieItem;
       return (
         <button
@@ -165,13 +160,17 @@ export default class App extends React.Component {
 
   @autobind
   gamepadJoin(e) {
-    engine.gamepadJoin(this.state.gamepadName, this.state.gameCode);
+    let payload = {
+      name: this.state.gamepadName,
+      gameCode: this.state.gameCode
+    }
+    engine.gamepadJoin(payload);
   }
 
   @autobind
   bindState() {
     this.setState({
-      gameState: engine.gameState.state
+      gameState: engine.getState()
     });
   }
 
