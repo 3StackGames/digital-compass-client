@@ -1,8 +1,8 @@
 'use strict';
 
-import React from 'react';
-import engine from '../engine';
-// import Landing from './landing';
+import React from 'react'
+import engine from '../engine'
+import autobind from 'autobind-decorator'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -13,7 +13,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    engine.gameState.addStateListener(this.bindState.bind(this));
+    engine.gameState.addStateListener(this.bindState);
     this.setState({
       gameState: engine.gameState.state
     });
@@ -25,7 +25,7 @@ export default class App extends React.Component {
   }
 
   componentWillUnmount() {
-    engine.gameState.removeStateListener(this.bindState.bind(this));
+    engine.gameState.removeStateListener(this.bindState);
   }
 
   render() {
@@ -50,20 +50,20 @@ export default class App extends React.Component {
           <p>Gamepad join:</p>
           <div>
             <label>Name</label>
-            <input onChange={this.inputName.bind(this)}/>
+            <input onChange={this.inputName}/>
           </div>
           <div>
             <label>Code</label>
-            <input onChange={this.inputGameCode.bind(this)}/>
+            <input onChange={this.inputGameCode}/>
           </div>
-          <button onClick={this.gamepadJoin.bind(this)}>Join</button>
+          <button onClick={this.gamepadJoin}>Join</button>
         </div>
         <div className="block block-input">
           <p>Gamepad input:</p>
           <input onChange={this.bindLie.bind(this)}/>
           <button
             onClick={this.inputLie.bind(this)}>
-            Gamepad Input
+            Submit Lie
           </button>
           <div>
             {this.playerSelectionInputs}
@@ -71,21 +71,30 @@ export default class App extends React.Component {
           <div>
             {this.moveOnButton}
           </div>
+          <div>
+            {this.restartButton}
+          </div>
         </div>
         <div className="block block-state">
           <p>Game State:</p>
-          <div>{JSON.stringify(this.state.gameState, null, 2)}</div>
+          <pre>{JSON.stringify(this.state.gameState, null, 2)}</pre>
         </div>
       </div>
     );
   }
 
-  get moveOnButton() {
-    return <button onClick={this.moveOn.bind(this)}>Move On</button>
+  get restartButton() {
+    return <button onClick={this.restart}>Restart</button>
   }
 
+  get moveOnButton() {
+    return (
+      <button onClick={this.moveOn}>Move On</button>
+    )
+  }
+
+  @autobind
   moveOn() {
-    console.log('hello')
     let { gameCode } = this.state
     engine.gamepadInput({
       gameCode,
@@ -93,20 +102,16 @@ export default class App extends React.Component {
     })
   }
 
-  get playerSelectionInputs() {
+  @autobind
+  restart() {
+    let { gameCode } = this.state
+    engine.gamepadInput({
+      gameCode,
+      restart: true
+    })
+  }
 
-    // {
-    //   question: currentquestion,
-    //   lies: [
-    //     {
-    //       lie: 'text',
-    //       liar: displayName
-    //     }
-    //   ],
-    //   voteCount:,
-    //   questionCount:
-    //
-    // }
+  get playerSelectionInputs() {
     if (!engine.gameState.state.lies || engine.gameState.state.lies.length === 0) {
       return (
         <p>No lies</p>
@@ -124,6 +129,7 @@ export default class App extends React.Component {
     });
   }
 
+  @autobind
   bindLie(e) {
     let lie = e.target.value;
     this.setState({
@@ -131,6 +137,7 @@ export default class App extends React.Component {
     });
   }
 
+  @autobind
   inputLie(e) {
     let { lie, gameCode } = this.state;
     let player = this.state.gamepadName;
@@ -142,34 +149,30 @@ export default class App extends React.Component {
     });
   }
 
+  @autobind
   inputName(e) {
     this.setState({
       gamepadName: e.target.value
     });
   }
 
+  @autobind
   inputGameCode(e) {
     this.setState({
       gameCode: e.target.value
     })
   }
 
+  @autobind
   gamepadJoin(e) {
     engine.gamepadJoin(this.state.gamepadName, this.state.gameCode);
   }
 
+  @autobind
   bindState() {
     this.setState({
       gameState: engine.gameState.state
     });
-  }
-
-  joinPlayer() {
-    let arjun = {
-      name: 'Arjun Sarode',
-      id: '1234'
-    };
-    engine.joinPlayer(arjun);
   }
 
   submitAnswers(answer) {
