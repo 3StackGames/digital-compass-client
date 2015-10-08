@@ -68,6 +68,9 @@ export default class App extends React.Component {
           <div>
             {this.playerSelectionInputs}
           </div>
+          <div>
+            {this.moveOnButton}
+          </div>
         </div>
         <div className="block block-state">
           <p>Game State:</p>
@@ -75,6 +78,19 @@ export default class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  get moveOnButton() {
+    return <button onClick={this.moveOn.bind(this)}>Move On</button>
+  }
+
+  moveOn() {
+    console.log('hello')
+    let { gameCode } = this.state
+    engine.gamepadInput({
+      gameCode,
+      moveOn: true
+    })
   }
 
   get playerSelectionInputs() {
@@ -101,7 +117,7 @@ export default class App extends React.Component {
       return (
         <button
           key={lie}
-          onClick={() => { engine.gamepadInput(lie) }}>
+          onClick={this.submitAnswers.bind(this, lie)}>
           {lie}
         </button>
       );
@@ -156,9 +172,13 @@ export default class App extends React.Component {
     engine.joinPlayer(arjun);
   }
 
-  submitAnswers() {
-    let answers = [{ value: 'hi' }, { value: 'bye' }];
-    engine.submitAnswers(answers);
+  submitAnswers(answer) {
+    let { gamepadName, gameCode } = this.state
+    engine.gamepadInput({
+      gameCode,
+      answer,
+      player: gamepadName
+    });
   }
 
   static PropTypes = {}
