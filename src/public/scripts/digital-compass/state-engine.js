@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-import { EventEmitter} from 'events';
-const CHANGE_EVENT = 'change';
+import { EventEmitter} from 'events'
+const CHANGE_EVENT = 'change'
 
 const StateEngine = (initialState={}) => {
   let engine = {}
@@ -14,7 +14,7 @@ const StateEngine = (initialState={}) => {
    *                          serializable to JSON.
    */
   function setState(newState) {
-    gameState = newState;
+    gameState = newState
     emitChange()
   }
 
@@ -24,14 +24,14 @@ const StateEngine = (initialState={}) => {
    * @return {Object} The current game state.
    */
   function getState() {
-    return gameState;
+    return gameState
   }
 
   /**
    * Emits a change event.
    */
   function emitChange() {
-    engine.emit(CHANGE_EVENT);
+    engine.emit(CHANGE_EVENT)
   }
 
   /**
@@ -40,7 +40,7 @@ const StateEngine = (initialState={}) => {
    * @param {Function} callback Function to call on state change events
    */
   function addStateListener(callback) {
-    engine.on(CHANGE_EVENT, callback);
+    engine.on(CHANGE_EVENT, callback)
   }
 
   /**
@@ -49,7 +49,7 @@ const StateEngine = (initialState={}) => {
    * @param  {Function} callback The function to remove
    */
   function removeStateListener(callback) {
-    engine.removeListener(CHANGE_EVENT, callback);
+    engine.removeListener(CHANGE_EVENT, callback)
   }
 
   /**
