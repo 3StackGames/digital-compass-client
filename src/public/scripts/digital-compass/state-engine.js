@@ -6,7 +6,6 @@ const CHANGE_EVENT = 'change';
 const StateEngine = (initialState={}) => {
   let engine = {}
   let gameState = initialState
-  EventEmitter.call(engine)
 
   /**
    * Setter for the game state. A change event is emitted afterwards.
