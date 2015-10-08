@@ -65,7 +65,9 @@ export default class App extends React.Component {
             onClick={this.inputLie.bind(this)}>
             Gamepad Input
           </button>
-          {this.playerSelectionInputs}
+          <div>
+            {this.playerSelectionInputs}
+          </div>
         </div>
         <div className="block block-state">
           <p>Game State:</p>
@@ -98,8 +100,9 @@ export default class App extends React.Component {
       let { lie } = lieItem;
       return (
         <button
-          key={lie}>{lie}
+          key={lie}
           onClick={() => { engine.gamepadInput(lie) }}>
+          {lie}
         </button>
       );
     });
