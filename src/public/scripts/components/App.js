@@ -38,10 +38,6 @@ export default class App extends React.Component {
             Display Join
           </button>
           <button
-            onClick={() => { engine.gamepadJoin('arjun', this.state.gameCode) }}>
-            Gamepad Join
-          </button>
-          <button
             onClick={() => { engine.beginGame() }}>
             Begin Game
           </button>
