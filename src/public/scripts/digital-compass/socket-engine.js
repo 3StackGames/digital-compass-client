@@ -12,7 +12,6 @@ const SocketEngine = (opts) =>  {
   // Runs in debug mode which prints out helpful console log statements
   const debug = opts.debug || false
   let stateEngine = StateEngine()
-  console.log(stateEngine.prototype)
 
   // Register callbacks on certain socket events
   _dc.on(events.CONNECT, onConnect)
