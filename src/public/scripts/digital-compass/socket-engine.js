@@ -55,7 +55,7 @@ const SocketEngine = (opts) =>  {
   function gamepadJoin(payload) {
     validatePayload(payload, 'name', 'gameCode')
     _dc.emit(events.GAMEPAD_JOIN, payload)
-    if (debug) console.log(`CLIENT => emitted gamepad join: ${payload}`)
+    if (debug) console.log('CLIENT => emitted gamepad join: ', payload)
   }
 
   /**
