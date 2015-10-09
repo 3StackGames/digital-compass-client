@@ -70,14 +70,14 @@ const SocketEngine = (opts) =>  {
    * Handler for the connection socket event.
    */
   function onConnect() {
-    if (this.debug) console.log('SERVER => emitted connect')
+    if (debug) console.log('SERVER => emitted connect')
   }
 
   /**
    * Handler for the display action complete event.
    */
   function onDisplayActionComplete() {
-    if (this.debug) console.log('CLIENT (display) => emitted display action complete')
+    if (debug) console.log('CLIENT (display) => emitted display action complete')
   }
 
   /**
@@ -87,7 +87,7 @@ const SocketEngine = (opts) =>  {
    * @param  {Object} newState The updated state object passed from the server.
    */
   function onStateUpdate(newState) {
-    if (this.debug) console.log('SERVER => emitted update state with data: ', newState)
+    if (debug) console.log('SERVER => emitted update state with data: ', newState)
     stateEngine.setState(newState)
   }
 
