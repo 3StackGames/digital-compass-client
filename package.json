@@ -1,12 +1,16 @@
 {
-  "name": "me",
+  "name": "digital-compass-client",
   "version": "0.1.0",
   "description": "Client side library for building with the Digital Compass framework",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "babel -d lib/ src/",
     "prepublish": "npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/3StackGames/digital-compass-client.git"
   },
   "author": "Arjun Sarode <sarodearjun57@gmail.com> (http://arjunsarode.com)",
   "license": "MIT",
