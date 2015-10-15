@@ -113,7 +113,7 @@ export default class App extends React.Component {
   get submitPackButton() {
     return (
       <button onClick={this.submitPackSelection}>
-        Submit pack selection
+        Submit Pack Selection
       </button>
     )
   }
