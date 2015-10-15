@@ -6,6 +6,9 @@
   "scripts": {
     "build": "babel -d lib/ src/",
     "prepublish": "npm run build",
+    "build-demo": "cd example && npm install",
+    "open-demo": "cd example && npm run open",
+    "demo": "npm run build-demo && npm run open-demo",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

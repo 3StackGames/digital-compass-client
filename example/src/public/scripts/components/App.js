@@ -54,6 +54,7 @@ export default class App extends React.Component {
           <button onClick={this.gamepadJoin}>Join</button>
         </div>
         <div className="block block-input">
+          {this.packSelection}
           <p>Gamepad input:</p>
           <input onChange={this.bindLie}/>
           <button
@@ -78,6 +79,45 @@ export default class App extends React.Component {
     );
   }
 
+  currentPhase(phaseName) {
+    return this.state.gameState
+        && this.state.gameState.currentPhase
+        && this.state.gameState.currentPhase.phaseName === phaseName
+  }
+
+  get packSelection() {
+    if (!this.currentPhase('PackSelectionPhase')) return
+    return (
+      <div>
+        <p>Pack selection:</p>
+        {this.packButtons}
+        {this.submitPackButton}
+      </div>
+    )
+  }
+
+  get packButtons() {
+    let packs = this.state.gameState.packOptions
+    return packs.map(pack => {
+      console.log(pack)
+      return (
+        <button
+          key={pack}
+          onClick={() => this.addPackSelection(pack)}>
+          {pack}
+        </button>
+      )
+    })
+  }
+
+  get submitPackButton() {
+    return (
+      <button onClick={this.submitPackSelection}>
+        Submit pack selection
+      </button>
+    )
+  }
+
   get restartButton() {
     return <button onClick={this.restart}>Restart</button>
   }
@@ -86,6 +126,27 @@ export default class App extends React.Component {
     return (
       <button onClick={this.moveOn}>Move On</button>
     )
+  }
+
+  @autobind
+  addPackSelection(pack) {
+    let packs = this.state.packSelections || []
+    packs.push(pack)
+    this.setState({
+      packSelections: packs
+    })
+  }
+
+  @autobind
+  submitPackSelection() {
+    let { packSelections, gameCode } = this.state
+    let player = this.state.gamepadName
+
+    engine.gamepadInput({
+      player,
+      gameCode,
+      packs: packSelections
+    })
   }
 
   @autobind

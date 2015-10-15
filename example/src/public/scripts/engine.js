@@ -1,6 +1,6 @@
 'use strict';
 
-import { SocketEngine } from './digital-compass';
+import { SocketEngine } from 'digital-compass-client';
 
 const jason = {
   host: '192.168.0.109',
