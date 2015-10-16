@@ -5,7 +5,7 @@ import io from 'socket.io-client'
 import { events, devices } from './constants'
 import { validatePayload } from './utils'
 
-const SocketEngine = (opts) =>  {
+const SocketEngine = (opts) => {
   const { host, port } = opts
   const _dc = io.connect(`http://${host}:${port}`)
 
@@ -21,9 +21,10 @@ const SocketEngine = (opts) =>  {
   /**
    * Emits a display action compete socket event
    */
-  function displayActionComplete() {
+  function displayActionComplete(payload) {
+    validatePayload(payload, 'gameCode')
     if (debug) console.log('CLIENT => emitted display action complete')
-    _dc.emit(events.DISPLAY_ACTION_COMPLETE)
+    _dc.emit(events.DISPLAY_ACTION_COMPLETE, payload)
   }
 
   /**
