@@ -37,7 +37,7 @@ export default class App extends React.Component {
             Begin Game
           </button>
           <button
-            onClick={() => { engine.displayActionComplete() }}>
+            onClick={() => { engine.displayActionComplete({ gameCode: this.state.gameCode}) }}>
             Display Action Complete
           </button>
         </div>
