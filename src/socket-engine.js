@@ -23,7 +23,7 @@ const SocketEngine = (opts) => {
    */
   function displayActionComplete(payload) {
     validatePayload(payload, 'gameCode')
-    if (debug) console.log('CLIENT => emitted display action complete')
+    if (debug) console.log('CLIENT => emitted display action complete: ', payload)
     _dc.emit(events.DISPLAY_ACTION_COMPLETE, payload)
   }
 
@@ -42,9 +42,13 @@ const SocketEngine = (opts) => {
   /**
    * Emits a display join socket event.
    */
-  function displayJoin() {
+  function displayJoin(gameCode) {
     if (debug) console.log('CLIENT => emitted display join')
-    _dc.emit(events.DISPLAY_JOIN)
+    if (gameCode) {
+      _dc.emit(events.DISPLAY_JOIN, { gameCode })
+    } else {
+      _dc.emit(events.DISPLAY_JOIN)
+    }
   }
 
   /**

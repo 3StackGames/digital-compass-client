@@ -8,7 +8,8 @@
     "prepublish": "npm run build",
     "build-demo": "cd example && npm install",
     "open-demo": "cd example && npm run client && npm run open",
-    "demo": "npm run build-demo && npm run open-demo",
+    "demo": "npm run build-demo && NODE_ENV=local npm run open-demo",
+    "demo:firewall": "npm run build-demo && NODE_ENV=jason npm run open-demo",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

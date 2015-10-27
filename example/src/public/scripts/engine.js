@@ -12,6 +12,11 @@ const local = {
   port: 3333,
   debug: true
 };
-let socketEngine = SocketEngine(local);
+
+let mode;
+if (process.env.NODE_ENV === 'local') mode = local
+else if (process.env.NODE_ENV === 'jason') mode = jason
+else mode = local
+let socketEngine = SocketEngine(mode);
 
 export default socketEngine;

@@ -173,7 +173,7 @@ export default class App extends React.Component {
         <p>No lies</p>
       );
     }
-    return engine.getState().lies.map(lieItem => {
+    let choices = engine.getState().lies.map(lieItem => {
       let { lie } = lieItem;
       return (
         <button
@@ -183,6 +183,8 @@ export default class App extends React.Component {
         </button>
       );
     });
+    choices.push(<button onClick={this.submitAnswers.bind(this, this.state.gameState.currentQuestion.answer)}>{this.state.gameState.currentQuestion.answer}</button>)
+    return choices;
   }
 
   @autobind
