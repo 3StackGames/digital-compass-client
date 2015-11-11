@@ -14,9 +14,11 @@ const SocketEngine = (opts) => {
   let stateEngine = StateEngine()
 
   // Register callbacks on certain socket events
-  _dc.on(events.CONNECT, onConnect)
-  _dc.on(events.STATE_UPDATE, onStateUpdate)
-  _dc.on(events.DISPLAY_ACTION_COMPLETE, onDisplayActionComplete)
+  _dc.on(events.CONNECT, _onConnect)
+  _dc.on(events.STATE_UPDATE, _onStateUpdate)
+  _dc.on(events.DISPLAY_ACTION_COMPLETE, _onDisplayActionComplete)
+  _dc.on(events.DISPLAY_JOIN_REJECTED, _onDisplayJoinRejected)
+  _dc.on(events.GAMEPAD_JOIN_REJECTED, _onGamepadJoinRejected)
 
   /**
    * Emits a display action compete socket event
@@ -74,14 +76,14 @@ const SocketEngine = (opts) => {
   /**
    * Handler for the connection socket event.
    */
-  function onConnect() {
+  function _onConnect() {
     if (debug) console.log('SERVER => emitted connect')
   }
 
   /**
    * Handler for the display action complete event.
    */
-  function onDisplayActionComplete() {
+  function _onDisplayActionComplete() {
     if (debug) console.log('CLIENT (display) => emitted display action complete')
   }
 
@@ -89,11 +91,51 @@ const SocketEngine = (opts) => {
    * Handler for the state update event. Updates the state engine's state with
    * the new state.
    *
-   * @param  {Object} newState The updated state object passed from the server.
+   * @param  {Object} newState The updated state object passed from the server
    */
-  function onStateUpdate(newState) {
+  function _onStateUpdate(newState) {
     if (debug) console.log('SERVER => emitted update state with data: ', newState)
     stateEngine.setState(newState)
+  }
+
+  /**
+   * Private handler for display join rejection event. Executes a callback if
+   * provided.
+   *
+   * @param  {Function} fn Callback to execute when handler is called
+   */
+  function _onDisplayJoinRejected() {
+    if (debug) console.log('SERVER => emitted display join rejected')
+    if (fn) fn()
+  }
+
+  /**
+   * Public function to set the callback to trigger on display rejected events.
+   *
+   * @param  {Function} fn Callback to bind display rejected events with
+   */
+  function onDisplayJoinRejected(fn) {
+    _onDisplayJoinRejected.bind(this, fn)
+  }
+
+  /**
+   * Private handler for gamepad join rejection event. Executes a callback if
+   * provided.
+   *
+   * @param  {Function} fn Callback to execute when handler is called
+   */
+  function _onGamepadJoinRejected() {
+    if (debug) console.log('SERVER => emitted gamepad join rejected')
+    if (fn) fn()
+  }
+
+  /**
+   * Public function to set the callback to trigger on display rejected events.
+   *
+   * @param  {Function} fn Callback to execute when handler is called
+   */
+  function onGamepadJoinRejected(fn) {
+    _onGamepadJoinRejected.bind(this, fn)
   }
 
   /**
@@ -105,6 +147,8 @@ const SocketEngine = (opts) => {
     displayJoin,
     gamepadJoin,
     beginGame,
+    onDisplayJoinRejected,
+    onGamepadJoinRejected,
     socket: _dc
   })
 }
