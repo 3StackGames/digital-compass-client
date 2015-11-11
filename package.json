@@ -1,6 +1,6 @@
 {
   "name": "digital-compass-client",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Client side library for building with the Digital Compass framework",
   "main": "lib/index.js",
   "scripts": {
