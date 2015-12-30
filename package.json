@@ -19,6 +19,7 @@
   "author": "Arjun Sarode <sarodearjun57@gmail.com> (http://arjunsarode.com)",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.3.17",
     "babelify": "^6.2.0"
   },
   "dependencies": {
