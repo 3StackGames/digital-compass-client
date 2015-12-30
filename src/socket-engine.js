@@ -17,11 +17,14 @@ const SocketEngine = (opts) => {
   _dc.on(events.CONNECT, _onConnect)
   _dc.on(events.STATE_UPDATE, _onStateUpdate)
   _dc.on(events.DISPLAY_ACTION_COMPLETE, _onDisplayActionComplete)
+  _dc.on(events.DISPLAY_JOIN_REJECTED, _onDisplayJoinRejected)
+  _dc.on(events.GAMEPAD_JOIN_REJECTED, _onGamepadJoinRejected)
 
   /**
    * Emits a display action compete socket event
    */
   function displayActionComplete(payload) {
+    // validatePayload(payload, 'gameCode')
     if (debug) console.log('CLIENT => emitted display action complete: ', payload)
     _dc.emit(events.DISPLAY_ACTION_COMPLETE, payload)
   }
@@ -33,6 +36,7 @@ const SocketEngine = (opts) => {
    * @param  {Object} payload The payload to send over the socket
    */
   function gamepadInput(payload) {
+    // validatePayload(payload, 'gameCode')
     if (debug) console.log('CLIENT => emitted gamepad input: ', payload)
     _dc.emit(events.GAMEPAD_INPUT, payload)
   }
@@ -56,6 +60,7 @@ const SocketEngine = (opts) => {
    * @param  {Object} payload The payload to send over the socket
    */
   function gamepadJoin(payload) {
+    // validatePayload(payload, 'name', 'gameCode')
     _dc.emit(events.GAMEPAD_JOIN, payload)
     if (debug) console.log('CLIENT => emitted gamepad join: ', payload)
   }
@@ -105,27 +110,32 @@ const SocketEngine = (opts) => {
   }
 
   /**
-   * Sets the passed callback to trigger on display rejected events.
+   * Public function to set the callback to trigger on display rejected events.
    *
    * @param  {Function} fn Callback to bind display rejected events with
    */
   function onDisplayJoinRejected(fn) {
-    _dc.on(events.DISPLAY_JOIN_REJECTED, () => {
-      if (debug) console.log('SERVER => emitted display join rejected')
-      fn()
-    })
+    _onDisplayJoinRejected.bind(this, fn)
   }
 
   /**
-   * Sets the passed callback to trigger on display rejected events.
+   * Private handler for gamepad join rejection event. Executes a callback if
+   * provided.
+   *
+   * @param  {Function} fn Callback to execute when handler is called
+   */
+  function _onGamepadJoinRejected() {
+    if (debug) console.log('SERVER => emitted gamepad join rejected')
+    if (fn) fn()
+  }
+
+  /**
+   * Public function to set the callback to trigger on display rejected events.
    *
    * @param  {Function} fn Callback to execute when handler is called
    */
   function onGamepadJoinRejected(fn) {
-    _dc.on(events.GAMEPAD_JOIN_REJECTED, () => {
-      if (debug) console.log('SERVER => emitted gamepad join rejected')
-      fn()
-    })
+    _onGamepadJoinRejected.bind(this, fn)
   }
 
   /**
