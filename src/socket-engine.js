@@ -22,7 +22,6 @@ const SocketEngine = (opts) => {
    * Emits a display action compete socket event
    */
   function displayActionComplete(payload) {
-    validatePayload(payload, 'gameCode')
     if (debug) console.log('CLIENT => emitted display action complete: ', payload)
     _dc.emit(events.DISPLAY_ACTION_COMPLETE, payload)
   }
@@ -34,7 +33,6 @@ const SocketEngine = (opts) => {
    * @param  {Object} payload The payload to send over the socket
    */
   function gamepadInput(payload) {
-    validatePayload(payload, 'gameCode')
     if (debug) console.log('CLIENT => emitted gamepad input: ', payload)
     _dc.emit(events.GAMEPAD_INPUT, payload)
   }
@@ -58,7 +56,6 @@ const SocketEngine = (opts) => {
    * @param  {Object} payload The payload to send over the socket
    */
   function gamepadJoin(payload) {
-    validatePayload(payload, 'name', 'gameCode')
     _dc.emit(events.GAMEPAD_JOIN, payload)
     if (debug) console.log('CLIENT => emitted gamepad join: ', payload)
   }
